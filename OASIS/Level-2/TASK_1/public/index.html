@@ -21,7 +21,7 @@
             //Function call on bodyLoad()
             function bodyLoad(){   
                 //Fetch the array of JSON data from the JSON file 
-                fetch('/public/data/calculator.json')
+                fetch('./data/calculator.json')
                 .then((res)=>res.json())    //Convert the data from binary to JSON
                 .then((data)=>{
                     //Iterate the Array of JSON data
