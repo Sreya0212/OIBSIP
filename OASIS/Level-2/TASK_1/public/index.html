@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <!-- Adding the Bootstrap CDN Lins for Bootstrap and BootstrapIcons CSS styles -->
+        <link 
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" 
+            rel="stylesheet" 
+            crossorigin="anonymous"
+        >
+      
+        <!-- Bootstrap Icons -->
+        <link 
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.2/font/bootstrap-icons.min.css" 
+            rel="stylesheet" 
+            crossorigin="anonymous"
+        >
+
+        <script>  
+            //Creating a String variable which will hold all the entered numbers in Calculator
+            let str = '';
+
+            //Function call on bodyLoad()
+            function bodyLoad(){   
+                //Fetch the array of JSON data from the JSON file 
+                fetch('/data/calculator.json')
+                .then((res)=>res.json())    //Convert the data from binary to JSON
+                .then((data)=>{
+                    //Iterate the Array of JSON data
+                    for(var item of data){
+                        //For every item or object in the Array create a div element
+                        var div = document.createElement('div');
+
+                        //Provide Bootstrap classes for the div for responsive-ness
+                        div.className = 'col-3 col-lg-3';
+
+                        //Create another button element for calculator buttons
+                        var btn = document.createElement('button');
+
+                        //Assign bootstrap classes for the button
+                        btn.className = 'btn btn-primary w-100 p-2 mt-2 font-monospace fw-bold';
+                        btn.innerHTML = item.symbol;
+                        btn.value = item.value;
+                        btn.id = item.symbol;
+
+                        //Assign a Click event to each key of the Calculator
+                        btn.addEventListener("click", function(){
+                            //Update `str` with the button's value
+                            str += this.value; 
+
+                            //Show whatever we type in the screen of calculator
+                            document.getElementById("typeBox").innerHTML = str;
+
+                            //If "=" then evaluate the expression
+                            if(this.id == '='){
+                                //If the exp starts with Root under 
+                                if(str.charAt(0)=='√'){
+                                    //Remove the root under sign first
+                                    str = str.substr(1,str.length-1);
+                                    console.log(str);
+
+                                    //Then check if the other part is negative or not
+                                    if(str.charAt(0)=='-'){
+                                        //If negative then also remove the - sign
+                                        str = str.substr(1,str.length-1);
+
+                                        //Perform the Root operation of the remaining part
+                                        str = Math.sqrt(eval(str));
+
+                                        //Assigining the complex number j and append to the result
+                                        str = str+'j';
+
+                                        //Show the result in the screen
+                                        document.getElementById("ansBox").innerHTML = `${str}`;
+                                    }   
+                                    else{   
+                                        //If the res not a number then give err msg
+                                        if(isNaN(Math.sqrt(str))){
+                                            document.getElementById("ansBox").innerHTML = `Math Error!`.fontcolor('red').bold();
+                                        }else{
+                                            document.getElementById("ansBox").innerHTML = Math.sqrt(str);
+                                        }
+                                    }
+                                }
+                                else{
+                                    //If the res not a number then give err msg
+                                    if(isNaN(eval(str)))
+                                        document.getElementById("ansBox").innerHTML = `Math Error!`.fontcolor('red').bold();
+                                    else
+                                        document.getElementById("ansBox").innerHTML = `${eval(str)}`;
+                                }     
+                            }else if(this.id=='CLEAR'){
+                                //Clear the entire screen as well has typing screen
+                                document.getElementById('typeBox').innerHTML = '';
+                                document.getElementById('ansBox').innerHTML = '';
+                                str = '';
+                            }else if(this.id=='DEL'){
+                                //del the last single entered digit from the string
+                                document.getElementById('typeBox').innerHTML = str.slice(0,-1);
+                                str = str.slice(0,-1);
+                            }
+                            else{
+                                //pring error msg
+                                document.getElementById('ansBox').innerHTML = `Invalid Operators!`.fontcolor('red').bold();
+                            }
+                        });
+
+                        //append the btn element under the div
+                        div.appendChild(btn);
+
+                        //Append the div under the body of the calculator card
+                        document.querySelector("#calBody").appendChild(div);
+                    }
+                })
+            }
+        </script> 
+    </head>
+    <body onload="bodyLoad()" class="font-monospace fw-bold">
+        <div class="container-fluid">
+            <div class="row" style="margin-top: 140px;">
+                <div class="col-3 col-lg-4">
+                </div>
+                <div class="col-6 col-lg-4">
+                    <div class="card m-2 p-2" style="height: 100%; width: 100%; border-radius: 20px">
+                        <div class="card-header bg-info" style="border-radius: 10px">
+                            <p id="typeBox" class="font-monospace fw-bold"></p>
+                            <h2 style="float: right; font-family: monospace; font-weight: bold;" id="ansBox"></h2>
+                        </div>
+                        <div class="card-body row" id="calBody">               
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 col-lg-4">
+                </div>
+            </div>
+        </div>
+
+        <!-- Adding the Bootstrap CDN Lins for Bootstrap JS components -->
+        <script 
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"  
+            crossorigin="anonymous">
+        </script>
+    </body>
+</html>
