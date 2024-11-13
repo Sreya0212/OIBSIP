@@ -1,6 +1,1 @@
-{
-    "builds": [
-      { "src": "Task1/**", "use": "@vercel/static-build" }
-    ],
-    "outputDirectory": "Task1"
-}
+{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
